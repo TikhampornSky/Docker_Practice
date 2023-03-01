@@ -1,0 +1,28 @@
+version: '2'
+services:
+  db:
+    build: ./test-database
+    image: db
+    container_name: db
+    environment:
+        MYSQL_ROOT_PASSWORD: 123
+        MYSQL_USER: users_service
+        MYSQL_PASSWORD: 123
+        MYSQL_DATABASE: users
+    volumes:
+        - /var/lib/mysql
+    expose:
+        - "3306"
+    ports:
+        - "6002:3306"
+  users-service:
+    build: ./users-service
+    container_name: users-service
+    ports:
+     - "6001:6001"  
+    links:
+      - db:db
+    depends_on:
+     - db
+    environment:
+     - DATABASE_HOST=db
